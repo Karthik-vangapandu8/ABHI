@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edubot LMS Platform</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f7;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #6e7f80;
+            color: white;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            height: 40px;
+        }
+        
+        .welcome-text {
+            margin-left: 20px;
+            font-size: 18px;
+            color: #fff;
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .notification-icon, .user-avatar {
+            margin-left: 20px;
+            cursor: pointer;
+        }
+        
+        .notification-icon {
+            position: relative;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            font-size: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .user-avatar img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+        }
+        
+        .sidebar {
+            width: 220px;
+            background-color: #1d1e70;
+            color: white;
+            height: calc(100vh - 70px);
+            padding: 20px 0;
+            position: fixed;
+            left: 0;
+            top: 70px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+        }
+        
+        .sidebar-menu li {
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .sidebar-menu li:hover {
+            background-color: #272864;
+        }
+        
+        .sidebar-menu li.active {
+            background-color: #272864;
+        }
+        
+        .sidebar-menu li i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .main-content {
+            margin-left: 220px;
+            padding: 20px;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .breadcrumb a {
+            color: #666;
+            text-decoration: none;
+        }
+        
+        .breadcrumb span {
+            margin: 0 5px;
+        }
+        
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .form-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #1d1e70;
+        }
+        
+        .form-hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .checkbox-group input {
+            margin-right: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: #1d1e70;
+            color: white;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #1d1e70;
+            color: #1d1e70;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal {
+            background-color: #fff;
+            border-radius: 4px;
+            width: 400px;
+            position: relative;
+        }
+        
+        .modal-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+        }
+        
+        .modal-close {
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .link-input-container {
+            border: 1px solid #1d1e70;
+            border-radius: 4px;
+            background-color: #f6f6f6;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .link-input-placeholder {
+            color: #4b4b4b;
+            font-size: 12px;
+        }
+        
+        .select-wrapper {
+            position: relative;
+        }
+        
+        .select-wrapper::after {
+            content: '▼';
+            font-size: 12px;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #666;
+        }
+        
+        select.form-control {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding-right: 30px;
+        }
+        
+        .copy-icon {
+            cursor: pointer;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="../assets/images/edubot_logo.png" alt="Edubot Logo" class="logo">
+            <div class="welcome-text">Hello Kranthi, Welcome to Edubot LMS Platform</div>
+        </div>
+        <div class="user-actions">
+            <div class="notification-icon">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">1</span>
+            </div>
+            <div class="user-avatar">
+                <img src="../assets/images/user_avatar.png" alt="User Avatar">
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <ul class="sidebar-menu">
+            <li><i class="fas fa-th-large"></i> All Program & Courses</li>
+            <li><i class="fas fa-check-circle"></i> Approve Courses</li>
+            <li><i class="fas fa-user"></i> Manage User</li>
+            <li><i class="fas fa-user-graduate"></i> Student</li>
+            <li><i class="fas fa-building"></i> Organization</li>
+            <li><i class="fas fa-folder"></i> Manage Programs</li>
+            <li class="active"><i class="fas fa-book"></i> Manage Courses</li>
+            <li><i class="fas fa-file-alt"></i> Submissions</li>
+            <li><i class="fas fa-layer-group"></i> Manage Batches</li>
+            <li><i class="fas fa-exchange-alt"></i> Data Import/Export</li>
+            <li><i class="fas fa-ticket-alt"></i> Raised Tickets</li>
+            <li><i class="fas fa-cog"></i> Help and Settings</li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="breadcrumb">
+            <a href="#">Home</a>
+            <span>></span>
+            <a href="#">Manage Courses</a>
+            <span>></span>
+            <a href="#">Add Courses</a>
+            <span>></span>
+            <span>Add Modules/Materials</span>
+        </div>
+
+        <h1 class="page-title">Add Modules/Materials</h1>
+
+        <div class="form-container">
+            <form id="moduleForm">
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" class="form-control" value="Introduction to Java and the Eclipse IDE">
+                </div>
+
+                <div class="form-group">
+                    <label for="summary">Summary (Optional)</label>
+                    <textarea id="summary" class="form-control" rows="3">Java is a versatile, object-oriented programming language used for various applications. Eclipse IDE, an open-source platform, simplifies Java development with its integrated coding and debugging tools.</textarea>
+                    <div class="form-hint">Maximum 100 character</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Create Platform Link</label>
+                    
+                    <div class="form-row" style="display: flex; gap: 20px; margin-bottom: 15px;">
+                        <div style="flex: 1;">
+                            <label for="githubOrgName">Github Organization Name</label>
+                            <input type="text" id="githubOrgName" class="form-control">
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="category">Category</label>
+                            <input type="text" id="category" class="form-control" value="Programming fundamentals">
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="display: flex; gap: 20px; margin-bottom: 15px;">
+                        <div style="flex: 1;">
+                            <label for="githubAssignmentName">Github Assignment Name</label>
+                            <input type="text" id="githubAssignmentName" class="form-control">
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="platformType">Platform Type</label>
+                            <div class="select-wrapper">
+                                <select id="platformType" class="form-control">
+                                    <option value="text">Text</option>
+                                    <option value="video">Video</option>
+                                    <option value="quiz">Quiz</option>
+                                    <option value="assignment">Assignment</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="platformLink">Platform Link</label>
+                        <div style="display: flex; align-items: center;">
+                            <input type="text" id="platformLink" class="form-control" value="c5000ff5-e2cc-4fc1-8b3f-57786293259f" readonly>
+                            <span class="copy-icon"><i class="fas fa-copy"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="autoAnalysis" checked>
+                    <label for="autoAnalysis">Auto analysis</label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="testCases">
+                    <label for="testCases">Test cases</label>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="addLinksModal">
+        <div class="modal" style="width: 400px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Links</h3>
+                <button class="modal-close" id="closeModal">
+                    <img src="../assets/images/img_close_button.svg" alt="Close" width="24" height="24">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="link-input-container">
+                    <div class="link-input-placeholder">Paste your link here</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelBtn">Cancel</button>
+                <button class="btn btn-primary" id="uploadBtn">Upload</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Font Awesome icons (simulated)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Modal functionality
+            const modal = document.getElementById('addLinksModal');
+            const closeModal = document.getElementById('closeModal');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const uploadBtn = document.getElementById('uploadBtn');
+            
+            // Close modal function
+            function hideModal() {
+                modal.style.display = 'none';
+            }
+            
+            // Event listeners for closing modal
+            closeModal.addEventListener('click', hideModal);
+            cancelBtn.addEventListener('click', hideModal);
+            
+            // Upload button functionality
+            uploadBtn.addEventListener('click', function() {
+                // Simulate upload process
+                alert('Link uploaded successfully!');
+                hideModal();
+            });
+            
+            // Link input container functionality
+            const linkContainer = document.querySelector('.link-input-container');
+            linkContainer.addEventListener('click', function() {
+                const placeholder = this.querySelector('.link-input-placeholder');
+                placeholder.style.display = 'none';
+                
+                // Create input if it doesn't exist
+                if (!this.querySelector('input')) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'form-control';
+                    input.style.border = 'none';
+                    input.style.background = 'transparent';
+                    input.style.width = '100%';
+                    input.placeholder = 'Paste your link here';
+                    input.addEventListener('blur', function() {
+                        if (!this.value) {
+                            placeholder.style.display = 'block';
+                        }
+                    });
+                    this.appendChild(input);
+                    input.focus();
+                }
+            });
+            
+            // Copy functionality
+            const copyIcon = document.querySelector('.copy-icon');
+            copyIcon.addEventListener('click', function() {
+                const platformLink = document.getElementById('platformLink');
+                platformLink.select();
+                document.execCommand('copy');
+                
+                // Show copied notification
+                const notification = document.createElement('div');
+                notification.textContent = 'Copied!';
+                notification.style.position = 'absolute';
+                notification.style.backgroundColor = '#333';
+                notification.style.color = 'white';
+                notification.style.padding = '5px 10px';
+                notification.style.borderRadius = '3px';
+                notification.style.fontSize = '12px';
+                notification.style.zIndex = '1000';
+                
+                // Position near the copy icon
+                const rect = copyIcon.getBoundingClientRect();
+                notification.style.top = `${rect.top - 30}px`;
+                notification.style.left = `${rect.left}px`;
+                
+                document.body.appendChild(notification);
+                
+                // Remove after 2 seconds
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
